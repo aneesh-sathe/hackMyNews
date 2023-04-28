@@ -8,12 +8,16 @@ soup = BeautifulSoup(res, "html.parser")
 article_name = []
 article_link = []
 article_rating = []
+
 x = soup.find_all(name="span", class_="titleline")
-for span in x:
-    links = span.find_all("a")
-    for link in links:
-        article_link.append(link["href"])
-        article_name.append(link.getText())
+for i in x:
+    article_name.append(i.getText())
+
+
+x = soup.select(selector="span a", class_="titleline")
+for content in x:
+    if "https:" in content["href"]:
+        article_link.append(content["href"])
 
 x = soup.find_all(name="span", class_="score")
 for votes in x:
@@ -21,11 +25,12 @@ for votes in x:
     article_rating.append(int(v))
 
 
-n = len(article_link)
+article_link.pop()  # Removing Footer Links
+article_link.pop()
+article_link.pop()
 
-names = article_name[0:n:2]
-links = article_link[0:n:2]
+max_votes = max(article_rating)
+index = article_rating.index(max_votes)
 
-
-print(article_name)
-print(names)
+print(article_name[index + 1])
+print(article_link[index - 1])
